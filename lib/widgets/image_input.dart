@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 
+import 'package:image_picker/image_picker.dart';
+
 class ImageInput extends StatefulWidget {
   const ImageInput({Key? key}) : super(key: key);
 
@@ -9,7 +11,17 @@ class ImageInput extends StatefulWidget {
 }
 
 class _ImageInputState extends State<ImageInput> {
-  late File _storedImage;
+  XFile? _storedImage;
+
+  Future<void> _takePicture() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? imageFile = await _picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 600,
+      preferredCameraDevice: CameraDevice.rear,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -20,9 +32,9 @@ class _ImageInputState extends State<ImageInput> {
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: Colors.grey),
           ),
-          child: _storedImage.path.isEmpty
+          child: _storedImage != null
               ? Image.file(
-                  _storedImage,
+                  _storedImage as File,
                   fit: BoxFit.cover,
                   width: double.infinity,
                 )
@@ -37,7 +49,7 @@ class _ImageInputState extends State<ImageInput> {
         ),
         Expanded(
           child: FlatButton.icon(
-            onPressed: () {},
+            onPressed: _takePicture,
             icon: Icon(Icons.camera),
             label: Text('Take Picture'),
             textColor: Theme.of(context).primaryColor,
